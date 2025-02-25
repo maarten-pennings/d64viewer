@@ -698,10 +698,10 @@ class Block:
 
   # Block prints itself in human dir format (filename/filetype)
   def print_dirhuman(self,with_blockid=True,with_header=True,with_nexts=17):
-    if with_blockid : print( f"|{self.get_blockid():-<48}|" )
+    if with_blockid : print( f"|{self.get_blockid():-<52}|" )
     if with_header : 
-      print( f"|blocks| filename           |filetype| block1    |" )
-      print( f"|------|--------------------|--------|-----------|" )
+      print( f"| blocks | filename           | filetype | block1    |" )
+      print( f"|--------|--------------------|----------|-----------|" )
     for eix in range(0,256,32) :
       ftype = filetype2str(self.data[eix+0x02])
       block1= block_find(self.data[eix+0x03],self.data[eix+0x04])
@@ -709,9 +709,7 @@ class Block:
       fname= "'"+filename2str( self.data[eix+0x05:eix+0x14+1] )+"'"
       fsize= self.data[eix+0x1E] +256*self.data[eix+0x1F]
       if self.data[eix+0x02] & 0b111 == 0b000 : continue # skip DEL
-      print( f"|{fsize:^6}| {fname:<18s} |{ftype:^8s}|{ts_block1}|" ) 
-    if with_header : 
-      print( f"|------|--------------------|--------|-----------|" )
+      print( f"| {fsize:^6} | {fname:<18s} | {ftype:^8s} |{ts_block1}|" ) 
     if with_nexts>0 :
       block= self.next()
       if block!=None : 
@@ -926,7 +924,7 @@ def main() :
   for bix in range(len(content)//BYTESPERBLOCK):
     blocks.append( Block(bix,content[bix*BYTESPERBLOCK:(1+bix)*BYTESPERBLOCK] ) )
 
-  # Determine topic and block index
+  # Determine topic (and block index)
   bix=-1
   topic=""
   tmsg=""
@@ -1038,6 +1036,9 @@ def main() :
     mmsg= mmsg[1:] # strip leading space
   # convenient defaults
   if args.mcont==None :
+    if args.tblock==None and not args.tbam and args.tdir==None and args.tfile==None and not args.tdisk:
+      mcont=17 # entire dir
+      mmsg+= f" cont({mcont})"
     if args.tdir==0 : 
       mcont=17 # entire dir
       mmsg+= f" cont({mcont})"
