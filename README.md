@@ -143,7 +143,7 @@ showing dir starts at 358 as dir [tech0 notes]
 Directory entry notes
 - blocks is number of disk blocks (of 256 bytes) used by file
   first 2 bytes are not file content but form track/sector link to next block
-- filename is the name of teh file (max 16 chars, spaces allowed)
+- filename is the name of the file (max 16 chars, spaces allowed)
 - filetype
   - DEL: deleted (or not yet used)
   - SEQ: sequential (data) file
@@ -158,7 +158,7 @@ Directory entry notes
 - block1 is track/sector link to first block of file
 ```
 
-We now pick one of the files as topic (topic `--tife CASE-09`); the view by default is hex.
+We now pick one of the files as topic (topic `--tfile CASE-09`); the view by default is hex.
 
 ```
 (env) C:\Repos\d64viewer\viewer>run ..\testcases\cases.d64  --tfile CASE-09
@@ -485,6 +485,27 @@ I used these resources
 - [1541 manual](https://www.manualslib.com/manual/827205/Commodore-1541-Ii.html?page=97#manual) much more verbose, still missing some details
 - [wiki](https://en.wikipedia.org/wiki/Commodore_DOS) good reference for the commands 
 
+
+## Todo
+
+Running `run partmngr.d64  --tfile A0  --vbasic  --mtech 0` on the
+[simple partition manager](https://github.com/maarten-pennings/howto/blob/main/c64mempart/readme.md)
+has a bug
+```
+| 2268 |223 |   2296 |   180 | PRINT "TYPE APP NUM (1..2)"°                                                                          |
+| 2296 |251 |   2319 |   190 | GET                                                                                                   |
+|block 346 zone 0/21 track 17 sector 10 type FIL-------------------------------------------------------------------------------------|
+| 2301 |  2 |  ..... | ..... | ... °                                                                                                 |
+| 2319 | 20 |   2338 |   200 | IF A$="1" THEN 300°                                                                                   |
+```
+
+the `a$:if a$="" then 190` is lost
+
+```
+180 print "type app num (1..2)"
+190 get a$:if a$="" then 190
+200 if a$="1" then 300
+```
 
 
 (end)
